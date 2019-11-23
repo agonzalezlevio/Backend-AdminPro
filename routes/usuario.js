@@ -1,4 +1,5 @@
 let express = require('express');
+let bcrypt = require('bcryptjs');
 
 // Inicializar variables
 let app = express();
@@ -47,7 +48,7 @@ app.post('/', (req, res) => {
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,
-        password: body.password,
+        password: bcrypt.hashSync(body.password, 10),
         img: body.img,
         role: body.role
     });
