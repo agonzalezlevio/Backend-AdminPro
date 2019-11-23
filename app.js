@@ -1,10 +1,26 @@
 // Requires 
 let express = require('express');
 let mongoose = require('mongoose');
+let bodyParser = require('body-parser')
 
 
 // Inicializar variables
 let app = express();
+
+// Body Parser
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
+
+
+
+// Importar rutas
+let appRoutes = require('./routes/app');
+let usuarioRoutes = require('./routes/usuario');
 
 // Conexión a la base de datos
 mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', (error, response) => {
@@ -19,12 +35,7 @@ app.listen(3000, () => {
 });
 
 // Rutas
-app.get('/', (req, res, next) => {
-    res.status(200).json({
-        ok: true,
-        mensaje: 'Petición realizada correctamente'
-    });
-});
-
+app.use('/usuario', usuarioRoutes);
+app.use('/', appRoutes);
 
 
