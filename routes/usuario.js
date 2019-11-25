@@ -1,6 +1,5 @@
 let express = require('express');
 let bcrypt = require('bcryptjs');
-let jwt = require('jsonwebtoken');
 
 // Inicializar variables
 let app = express();
