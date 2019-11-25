@@ -5,6 +5,8 @@ let jwt = require('jsonwebtoken');
 // Inicializar variables
 let app = express();
 
+// Seed token
+let SEED = require('../config/config').SEED;
 
 // Importaciones de Schema
 let Usuario = require('../models/usuario');
@@ -43,7 +45,7 @@ app.post('/', (req, res) => {
         usuarioDB.password =  null;
 
         // Creación token
-        let token = jwt.sign({ usuario: usuarioDB}, '@este-es@un-seed-complicado', { expiresIn: 14400 })
+        let token = jwt.sign({ usuario: usuarioDB}, SEED, { expiresIn: 14400 })
 
         res.status(200).json({
             ok: true,

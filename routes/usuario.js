@@ -1,8 +1,12 @@
 let express = require('express');
 let bcrypt = require('bcryptjs');
+let jwt = require('jsonwebtoken');
 
 // Inicializar variables
 let app = express();
+
+// verificación token
+let mdAutenticacion = require('../middlewares/autenticacion');
 
 
 // Importaciones de Schema
@@ -39,42 +43,9 @@ app.get('/', (req, res, next) => {
 
 
 // ==========================================
-// Crear un nuevo usuario
-// ==========================================
-app.post('/', (req, res) => {
-
-    let body = req.body;
-
-    let usuario = new Usuario({
-        nombre: body.nombre,
-        email: body.email,
-        password: bcrypt.hashSync(body.password, 10),
-        img: body.img,
-        role: body.role
-    });
-
-    usuario.save((error, usuarioGuardado) => {
-        // Errores
-        if (error) {
-            return res.status(400).json({
-                ok: false,
-                mensaje: 'Error al crear usuario',
-                errors: error
-            });
-        } else {
-            res.status(201).json({
-                ok: true,
-                usuario: usuarioGuardado
-            });
-        }
-    });
-
-});
-
-// ==========================================
 // Actualizar usuario
 // ==========================================
-app.put('/:id', (req, res) => {
+app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
     let id = req.params.id;
 
     Usuario.findById(id, 'nombre email img role').exec(
@@ -123,9 +94,46 @@ app.put('/:id', (req, res) => {
 })
 
 // ==========================================
+// Crear un nuevo usuario
+// ==========================================
+app.post('/', mdAutenticacion.verificaToken ,(req, res) => {
+
+    let body = req.body;
+
+    let usuario = new Usuario({
+        nombre: body.nombre,
+        email: body.email,
+        password: bcrypt.hashSync(body.password, 10),
+        img: body.img,
+        role: body.role
+    });
+
+    usuario.save((error, usuarioGuardado) => {
+        // Errores
+        if (error) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'Error al crear usuario',
+                errors: error
+            });
+        } else {
+            res.status(201).json({
+                ok: true,
+                usuario: usuarioGuardado,
+                usuarioToken: req.usuario
+            });
+        }
+    });
+
+});
+
+
+
+
+// ==========================================
 // Borrar usuario
 // ==========================================
-app.delete('/:id', (req, res) => {
+app.delete('/:id', mdAutenticacion.verificaToken , (req, res) => {
 
     let id = req.params.id;
 
