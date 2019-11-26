@@ -19,9 +19,11 @@ app.use(bodyParser.json())
 
 
 // Importar rutas
-let appRoutes = require('./routes/app');
-let usuarioRoutes = require('./routes/usuario');
-let loginRoutes = require('./routes/login');
+const appRoutes = require('./routes/app');
+const usuarioRoutes = require('./routes/usuario');
+const medicoRoutes = require('./routes/medico');
+const hospitalRoutes = require('./routes/hospital');
+const loginRoutes = require('./routes/login');
 
 // Conexión a la base de datos
 const URI = 'mongodb://localhost:27017/hospitalDB';
@@ -40,6 +42,8 @@ app.listen(3000, () => {
 
 // Rutas
 app.use('/usuario', usuarioRoutes);
+app.use('/hospital', hospitalRoutes);
+app.use('/medico', medicoRoutes);
 app.use('/login', loginRoutes);
 app.use('/', appRoutes);
 
