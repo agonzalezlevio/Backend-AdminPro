@@ -16,27 +16,47 @@ let Medico = require('../models/medico');
 // ==========================================
 app.get('/', (req, res, next) => {
 
-    Medico.find({}, 'nombre img usuario hospital').exec(
-        (error, medicos) => {
+    // Conteo para paginación
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
 
-            // Errores
-            if (error) {
-                return res.status(500).json({
-                    ok: false,
-                    mensaje: 'Error cargando medicos',
-                    errors: error
-                });
+    Medico.find({}, 'nombre img usuario hospital')
+        .skip(desde)
+        .limit(5)
+        .populate('usuario', 'nombre email')
+        .populate('hospital')
+        .exec(
+            (error, medicos) => {
 
-            } else {
+                // Errores
+                if (error) {
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: 'Error cargando medicos',
+                        errors: error
+                    });
 
-                return res.status(200).json({
-                    ok: true,
-                    medicos: medicos
+                }
+
+                Medico.count({}, (error, conteo) => {
+                    // Errores
+                    if (error) {
+                        return res.status(500).json({
+                            ok: false,
+                            mensaje: 'Error al contar médicos',
+                            errors: error
+                        })
+                    };
+                    return res.status(200).json({
+                        ok: true,
+                        medicos: medicos,
+                        total: conteo
+                    });
+
                 });
 
             }
-        }
-    )
+        )
 });
 
 
@@ -96,7 +116,7 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
 // ==========================================
 // Crear un nuevo Medico
 // ==========================================
-app.post('/', mdAutenticacion.verificaToken ,(req, res) => {
+app.post('/', mdAutenticacion.verificaToken, (req, res) => {
 
     let body = req.body;
 
@@ -134,11 +154,11 @@ app.post('/', mdAutenticacion.verificaToken ,(req, res) => {
 // ==========================================
 // Borrar Médico
 // ==========================================
-app.delete('/:id', mdAutenticacion.verificaToken , (req, res) => {
+app.delete('/:id', mdAutenticacion.verificaToken, (req, res) => {
 
     let id = req.params.id;
 
-    Medico.findByIdAndRemove(id, 
+    Medico.findByIdAndRemove(id,
         (error, medicoBorrado) => {
             // Errores
             if (error) {

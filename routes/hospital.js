@@ -16,7 +16,16 @@ let Hospital = require('../models/hospital');
 // ==========================================
 app.get('/', (req, res, next) => {
 
-    Hospital.find({}, 'nombre usuario').exec(
+    // Conteo para paginación
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
+
+
+    Hospital.find({}, 'nombre usuario')
+    .skip(desde)
+    .limit(5)
+    .populate('usuario', 'nombre email')
+    .exec(
         (error, hospitales) => {
 
             // Errores
@@ -27,14 +36,22 @@ app.get('/', (req, res, next) => {
                     errors: error
                 });
 
-            } else {
-
+            } 
+            Hospital.count({}, (error, conteo)=> {
+                // Errores
+                if (error) {
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: 'Error al contar hospitales',
+                        errors: error
+                    })
+                }; 
                 return res.status(200).json({
                     ok: true,
-                    hospitales: hospitales
+                    hospitales: hospitales,
+                    total: conteo
                 });
-
-            }
+            });
         }
     )
 });
@@ -47,7 +64,8 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
 
     let id = req.params.id;
 
-    Hospital.findById(id, 'nombre usuario').exec(
+    Hospital.findById(id, 'nombre usuario')
+        .exec(
         (error, hospital) => {
             // Errores
             if (error) {
