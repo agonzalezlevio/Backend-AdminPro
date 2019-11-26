@@ -25,6 +25,7 @@ const medicoRoutes = require('./routes/medico');
 const hospitalRoutes = require('./routes/hospital');
 const loginRoutes = require('./routes/login');
 const busquedaRoutes = require('./routes/busqueda');
+const uploadRoutes = require('./routes/upload');
 
 // Conexión a la base de datos
 const URI = 'mongodb://localhost:27017/hospitalDB';
@@ -46,6 +47,7 @@ app.use('/usuario', usuarioRoutes);
 app.use('/hospital', hospitalRoutes);
 app.use('/busqueda', busquedaRoutes);
 app.use('/medico', medicoRoutes);
+app.use('/upload', uploadRoutes);
 app.use('/login', loginRoutes);
 
 
