@@ -18,7 +18,14 @@ let Usuario = require('../models/usuario');
 // ==========================================
 app.get('/', (req, res, next) => {
 
-    Usuario.find({}, 'nombre email img role').exec(
+    // Conteo para paginación
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
+
+    Usuario.find({}, 'nombre email img role')
+    .skip(desde)
+    .limit(5)
+    .exec(
         (error, usuarios) => {
             // Errores
             if (error) {
@@ -28,14 +35,23 @@ app.get('/', (req, res, next) => {
                     errors: error
                 });
 
-            } else {
-
+            }
+            
+            Usuario.count({}, (error, conteo)=> {
+                // Errores
+                if (error) {
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: 'Error al contar usuarios',
+                        errors: error
+                    })
+                }; 
                 return res.status(200).json({
                     ok: true,
-                    usuarios: usuarios
+                    usuarios: usuarios,
+                    total: conteo
                 });
-
-            }
+            })
         }
     )
 });
