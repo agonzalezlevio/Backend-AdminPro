@@ -7,6 +7,14 @@ const bodyParser = require('body-parser')
 // Inicializar variables
 let app = express();
 
+// CORS
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Methods','POST, GET, PUT, DELETE, OPTIONS')
+    next();
+  });
+
 // Body Parser
 
 // parse application/x-www-form-urlencoded
@@ -31,7 +39,12 @@ const imagenesRoutes = require('./routes/imagenes');
 // Conexión a la base de datos
 const URI = 'mongodb://localhost:27017/hospitalDB';
 
-mongoose.connect(URI, { useNewUrlParser: true , useUnifiedTopology: true, useCreateIndex: true})
+mongoose.connect(URI, 
+    { 
+        useNewUrlParser: true , 
+        useUnifiedTopology: true, 
+        useCreateIndex: true
+    })
         .then((response) => {
             console.log('Base de datos: \x1b[32m%s\x1b[0m', 'Online');
         })
