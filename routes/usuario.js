@@ -60,7 +60,7 @@ app.get('/', (req, res, next) => {
 // ==========================================
 // Actualizar usuario
 // ==========================================
-app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
+app.put('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaAdminUsuario], (req, res) => {
     let id = req.params.id;
 
     Usuario.findById(id, 'nombre email img role').exec(
@@ -90,7 +90,6 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
             //Fix temporal email único
             if (!usuario.email) usuario.email = body.email;
 
-            console.log('usuario', usuario);
             usuario.save((error, usuarioGuardado) => {
                 if (error) {
                     return res.status(400).json({
@@ -99,7 +98,6 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
                         errors: error
                     });
                 }
-                console.log(usuarioGuardado)
                 res.status(200).json({
                     ok: true,
                     usuario: usuarioGuardado
@@ -151,7 +149,7 @@ app.post('/',(req, res) => {
 // ==========================================
 // Borrar usuario
 // ==========================================
-app.delete('/:id', mdAutenticacion.verificaToken , (req, res) => {
+app.delete('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaAdmin], (req, res) => {
 
     let id = req.params.id;
 
