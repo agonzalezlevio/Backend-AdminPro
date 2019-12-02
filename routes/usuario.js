@@ -22,7 +22,7 @@ app.get('/', (req, res, next) => {
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
-    Usuario.find({}, 'nombre email img role')
+    Usuario.find({}, 'nombre email img role google')
     .skip(desde)
     .limit(5)
     .exec(
@@ -86,9 +86,11 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
             let body = req.body;
 
             usuario.nombre = body.nombre;
-            usuario.email = body.email;
             usuario.role = body.role;
+            //Fix temporal email único
+            if (!usuario.email) usuario.email = body.email;
 
+            console.log('usuario', usuario);
             usuario.save((error, usuarioGuardado) => {
                 if (error) {
                     return res.status(400).json({
@@ -97,6 +99,7 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
                         errors: error
                     });
                 }
+                console.log(usuarioGuardado)
                 res.status(200).json({
                     ok: true,
                     usuario: usuarioGuardado
@@ -111,7 +114,7 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
 // ==========================================
 // Crear un nuevo usuario
 // ==========================================
-app.post('/', mdAutenticacion.verificaToken ,(req, res) => {
+app.post('/',(req, res) => {
 
     let body = req.body;
 

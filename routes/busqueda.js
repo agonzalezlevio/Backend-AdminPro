@@ -77,7 +77,7 @@ app.get('/todo/:busqueda', (req, res, next) => {
 function buscarHospitales(busqueda, regex) {
     return new Promise((resolve, reject) =>
         Hospital.find({ nombre: regex })
-        .populate('usuario', 'nombre email role')
+        .populate('usuario', 'nombre email role img')
         .exec(
          (error, hospitales) => {
             if(error) {
@@ -94,7 +94,7 @@ function buscarHospitales(busqueda, regex) {
 function buscarMedicos(busqueda, regex) {
     return new Promise((resolve, reject) =>
         Medico.find({ nombre: regex })
-        .populate('usuario', 'nombre email role')
+        .populate('usuario', 'nombre email role img')
         .populate('hospital')
         .exec( 
             (error, medicos) => {
@@ -110,7 +110,7 @@ function buscarMedicos(busqueda, regex) {
 // Búsqueda de usuarios - nombre - email
 function buscarUsuarios(busqueda, regex) {
     return new Promise((resolve, reject) =>
-        Usuario.find({}, 'nombre email role')
+        Usuario.find({}, 'nombre email role img')
             .or([{ nombre: regex }, { email : regex}])
             .exec((error, usuarios) => {
                 if(error) {
