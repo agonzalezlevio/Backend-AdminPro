@@ -87,8 +87,7 @@ app.put('/:id', [mdAutenticacion.verificaToken, mdAutenticacion.verificaAdminUsu
 
             usuario.nombre = body.nombre;
             usuario.role = body.role;
-            //Fix temporal email único
-            if (!usuario.email) usuario.email = body.email;
+            usuario.email = body.email;
 
             usuario.save((error, usuarioGuardado) => {
                 if (error) {
